@@ -5,14 +5,15 @@ import './index.css';
 
 export default function QAPM() {
     const [muiGridItemTitles] = useState(['崩溃率', 'ANR率', '流畅度', '冷启动耗时', 'Webview页面完全加载耗时', 'JS错误率', '请求错误率', '成功请求耗时'])
-    const [regions, setRegions] = useState([{}])
+    // const [regions, setRegions] = useState([{
+
+    // }])
 
     const trendChartRef = useRef(null);
 
     useEffect(() => {
         // 总览 -- 图表
-        const muiGridItems = document.getElementsByClassName('MuiGrid-item-chart')
-        console.log(muiGridItems)
+        const muiGridItems = document.getElementsByClassName('MuiGrid-item-chart');
         const muiGridItemOption = {
             xAxis: {
                 type: 'category',
@@ -84,7 +85,6 @@ export default function QAPM() {
             ]
         };
         trendChart.setOption(trendChartOption);
-
     }, []);
 
     return (
@@ -97,7 +97,7 @@ export default function QAPM() {
                     {
                         muiGridItemTitles.map((muiGridItemTitle) => {
                             return (
-                                <div className="MuiGrid-item">
+                                <div className="MuiGrid-item" key={muiGridItemTitle}>
                                     <div className="MuiGrid-item-title">
                                         <h4>{muiGridItemTitle}</h4>
                                     </div>
@@ -126,7 +126,7 @@ export default function QAPM() {
                     </h4>
                 </div>
             </div>
-            <ShotBtn />
+            <ShotBtn region={"content"} />
         </>
     );
 }
