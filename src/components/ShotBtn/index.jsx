@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import html2canvas from 'html2canvas';
 import { saveAs } from 'file-saver';
-import './index.css'
+import tiny from '@mxsir/image-tiny';
+import './index.css';
 
 export default function ShotBtn(props) {
     const [height, setHeight] = useState('30px');
@@ -21,8 +22,7 @@ export default function ShotBtn(props) {
             // windowHeight: element.scrollHeight,
             scrollY: 0,
             scrollX: 0,
-            // scale: 0.8,
-            // scale: 1,
+            scale: 0.7,
             useCORS: true,
             allowTaint: true,
         }).then(canvas => {
@@ -38,7 +38,22 @@ export default function ShotBtn(props) {
             canvas.toBlob(function (blob) {
                 console.log('屏幕快照完成，可以保存图片了！');
                 // 利用 FileSaver.js 中的 saveAs 方法即可将 blob 保存至本地
-                saveAs(blob, "test.png");
+                // saveAs(blob, "test.png");
+
+                const oldFile = new File([blob], 'test.png', { type: 'image/png' });
+                console.log(oldFile);
+                tiny(oldFile, 0.1).then({
+                    function(newFile) {
+                        console.log('!!!!!!!!!!!!!!!!!!!!!!!')
+                        let reader = new FileReader();
+                        reader.readAsDataURL(newFile);
+                        reader.onload("", () => {
+                            console.log("======成功读取文件=====");
+                            // setDataURL(reader.result);
+                            // setDataURL("123456");
+                        })
+                    }
+                })
             });
 
             // 最后，将滚动元素滚动回屏幕快照前记录的纵向偏移量
