@@ -1,0 +1,12 @@
+.shotAllBtn {
+    z-index: 10;
+    position: fixed;
+    right: 30px;
+    top: 30px;
+    width: 30px;
+    /* height: 120px; */
+    background-color: skyblue;
+    font-size: 18px;
+    border: 1px none rgb(203, 193, 193);
+    border-radius: 10px;
+}
