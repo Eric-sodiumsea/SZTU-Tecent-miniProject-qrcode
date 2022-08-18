@@ -1,3 +1,8 @@
+/**
+ * @author Eric_sodiumsea
+ * @date 2022-08-18
+ */
+
 import React, { useState, useEffect, useRef } from 'react';
 import * as echarts from 'echarts';
 import ShotBtn from '../ShotBtn'
@@ -57,10 +62,10 @@ export default function QAPM() {
                 }
             ]
         };
-        Array.from(muiGridItems).map((muiGridItem) => {
+        for (const muiGridItem of muiGridItems) {
             const muiGridItemChart = echarts.init(muiGridItem);
             muiGridItemChart.setOption(muiGridItemOption);
-        })
+        }
 
         // 趋势分析 -- 图表
         const trendChart = echarts.init(trendChartRef.current);
@@ -241,12 +246,18 @@ export default function QAPM() {
 
     return (
         <>
+            {/* 插入 ShotBtn 组件，传入需要截图的区域的 id 数组对象 */}
             <ShotBtn shotOptions={shotOptions} />
 
+            {/* 总内容 */}
             <div id="content">
+
+                {/* 内容标题 */}
                 <h4 className="content-title">
                     性能看板
                 </h4>
+
+                {/* 总览表模块 */}
                 <div id="MuiGrid">
                     {
                         muiGridItemTitles.map((muiGridItemTitle) => {
@@ -263,12 +274,16 @@ export default function QAPM() {
                         })
                     }
                 </div>
+
+                {/* 趋势分析模块 */}
                 <div id="trend">
                     <h4 className="trend-title">
                         趋势分析
                     </h4>
                     <div ref={trendChartRef} className="trend-chart"></div>
                 </div>
+
+                {/* 崩溃次数模块 */}
                 <div id="crashes">
                     <h4 className="crashes-title">
                         崩溃次数TOP5的页面
@@ -278,6 +293,8 @@ export default function QAPM() {
                         <div ref={crash2Ref} className="crash2"></div>
                     </div>
                 </div>
+
+                {/* 地区分析模块 */}
                 <div id="region-analyze">
                     <h4 className="region-analyze-title">
                         地区分析

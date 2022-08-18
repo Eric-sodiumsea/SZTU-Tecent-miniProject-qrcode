@@ -4,12 +4,14 @@
     --box-margin-top: 30px;
 }
 
+/* 内容标题 */
 .content-title {
     background-color: var(--main-bg-color);
     box-shadow: var(--box-shadow);
     padding: 20px;
 }
 
+/* 总览表模块 */
 #MuiGrid {
     margin-top: var(--box-margin-top);
     width: 100%;
@@ -47,6 +49,7 @@
     height: 100%;
 }
 
+/* 趋势分析模块 */
 #trend {
     background-color: var(--main-bg-color);
     box-shadow: var(--box-shadow);
@@ -66,6 +69,7 @@
     height: 100%;
 }
 
+/* 崩溃次数模块 */
 #crashes {
     background-color: var(--main-bg-color);
     box-shadow: var(--box-shadow);
@@ -96,6 +100,7 @@
     display: inline-block;
 }
 
+/* 地区分析模块 */
 #region-analyze {
     background-color: var(--main-bg-color);
     box-shadow: var(--box-shadow);

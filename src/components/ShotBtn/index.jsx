@@ -1,6 +1,10 @@
+/**
+ * @author Eric_sodiumsea
+ * @date 2022-08-18
+ */
+
 import React, { useState, useRef } from 'react'
 import html2canvas from 'html2canvas';
-// import { saveAs } from 'file-saver';
 import QRCode from 'qrcode.react';
 import compress from './tiny';
 import './index.css';
@@ -24,28 +28,43 @@ export default function ShotBtn(props) {
         return await compress(base64);
     }
 
-    // 截图
+    /**
+     * 截图、压缩、分割base64
+     * @param {截图模块的Id} shotOptionId 
+     */
     function shotscreen(shotOptionId) {
         console.log(shotOptionId)
         console.log(document)
         const element = document.getElementById(`${shotOptionId}`);
         popupBoxRef.current.style.display = 'block';
+
+        /**
+         * 截图
+         * @param {截图模块的DOM元素} element 
+         */
         html2canvas(element, {
             width: element.scrollWidth,
             height: element.scrollHeight,
-            // windowWidth: element.scrollWidth,
             windowHeight: element.scrollHeight,
-            // scrollY: 0,
-            // scrollX: 0,
             scale: 0.7,
             useCORS: true,
             allowTaint: true,
         }).then(canvas => {
+            /**
+             * 执行异步函数
+             */
             (async () => {
+                // 将截图图片的 base64 保存下来，用于预览图片
                 setImgBase64(canvas.toDataURL())
-                let compressStr = await getCompress(canvas.toDataURL());
-                console.log("----\n", compressStr.length);
 
+                /**
+                 * getCompress
+                 * @param {base64} canvas.toDataURL()
+                 * @return {压缩图片并通过gzip压缩后的字符串} compressStr
+                 */
+                let compressStr = await getCompress(canvas.toDataURL());
+
+                // 分割字符串，存入数组中，后续逐个放到二维码中
                 const length = 700;
                 let temp_num = parseInt(compressStr.length / length)
                 if (compressStr.length % length !== 0) {
@@ -82,11 +101,14 @@ export default function ShotBtn(props) {
                     else {
                         temp_text += compressStr.slice(i * length, (i + 1) * length);
                     }
-                    // console.log(temp_text);
                     tempTextArray.push(temp_text);
                 }
                 setTextArray(tempTextArray);
-                document.getElementsByClassName('qrcode-box')[0].style.display = 'block'
+
+                // 显示 qrcode-box 弹窗
+                document.getElementById('qrcode-box').style.display = 'block'
+
+                // 开始轮播展示二维码
                 const id = setInterval(() => {
                     setCur(cur => {
                         return cur + 1 === temp_num ? 0 : cur + 1;
@@ -97,7 +119,7 @@ export default function ShotBtn(props) {
         });
     }
 
-    // 操作二维码的功能
+    // 关闭弹窗
     function closePopupBox() {
         popupBoxRef.current.style.display = 'none';
         setImgBase64('');
@@ -106,6 +128,7 @@ export default function ShotBtn(props) {
         carouselStop();
     }
 
+    // 跳转二维码
     function goto() {
         if (gotoRef.current.value !== '') {
             clearInterval(carousel.current);
@@ -119,6 +142,7 @@ export default function ShotBtn(props) {
         }
     }
 
+    // 继续轮播二维码
     function carouselContinue() {
         if (carouselBegin === false) {
             setCarouselBegin(true);
@@ -130,6 +154,7 @@ export default function ShotBtn(props) {
         }
     }
 
+    // 停止轮播二维码
     function carouselStop() {
         clearInterval(carousel.current);
         setCarouselBegin(false);
@@ -137,6 +162,7 @@ export default function ShotBtn(props) {
 
     return (
         <>
+            {/* 网页固钉 -- 截图选项 */}
             <div
                 className="shot-box"
                 onMouseOver={() => { setShowOptions('block') }}
@@ -158,14 +184,21 @@ export default function ShotBtn(props) {
                 </ul>
             </div>
 
-            <div ref={popupBoxRef} className="popup-box">
+            {/* 展示二维码的弹窗 */}
+            <div ref={popupBoxRef} id="popup-box">
                 <div onClick={closePopupBox} className="popup-box-close"></div>
+
+                {/* 图片预览区域 */}
                 <div className="popup-box-left">
                     <div className="img-box">
                         <img id="img-preview" src={imgBase64} alt="" />
                     </div>
                 </div>
+
+                {/* 有关二维码的区域 */}
                 <div className="popup-box-right">
+
+                    {/* 二维码展示区域 */}
                     <div className="qrcode-box">
                         < QRCode
                             id="qrCode"
@@ -175,6 +208,8 @@ export default function ShotBtn(props) {
                             style={{ margin: 'auto' }}
                         />
                     </div>
+
+                    {/* 二维码信息区域 */}
                     <div className="qrcode-msg-box">
                         <div className="qrcode-progress">
                             {

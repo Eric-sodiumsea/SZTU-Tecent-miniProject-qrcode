@@ -1,4 +1,4 @@
-/* 截图 -- 固定按钮 */
+/* 网页固钉 -- 截图选项 */
 .shot-box {
     z-index: 10;
     position: fixed;
@@ -14,7 +14,6 @@
     line-height: 30px;
 }
 
-/* 截图选项 */
 .shot-options-box {
     z-index: 10;
     position: fixed;
@@ -35,8 +34,8 @@
     margin: 5px;
 }
 
-/* 弹窗 */
-.popup-box {
+/* 展示二维码的弹窗 */
+#popup-box {
     position: fixed;
     z-index: 10;
     left: 50%;
@@ -79,7 +78,7 @@
     transform: rotate(-45deg);
 }
 
-/* 弹窗左部 */
+/* 图片预览区域 */
 .popup-box-left {
     position: fixed;
     left: 20px;
@@ -89,7 +88,7 @@
     height: 600px;
 }
 
-/* 图片预览区域 */
+/* 图片展示区域 */
 .img-box {
     position: fixed;
     left: 0%;
@@ -106,7 +105,7 @@
     border: 2px solid rgb(120, 237, 239);
 }
 
-/* 弹窗右部 */
+/* 有关二维码的区域 */
 .popup-box-right {
     /* float: right; */
     position: fixed;
@@ -136,6 +135,7 @@
     height: 100%;
 }
 
+/* 二维码进度区域 */
 .qrcode-progress {
     text-align: center;
     height: 50px;
