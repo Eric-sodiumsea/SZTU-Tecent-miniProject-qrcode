@@ -89,6 +89,7 @@ export default function QAPM() {
 
     return (
         <>
+            <ShotBtn region={"content"} />
             <div className="content">
                 <h4 className="content-title">
                     性能看板
@@ -126,7 +127,6 @@ export default function QAPM() {
                     </h4>
                 </div>
             </div>
-            <ShotBtn region={"content"} />
         </>
     );
 }
