@@ -2,8 +2,8 @@ import React, { useEffect, useState, useRef } from 'react'
 import html2canvas from 'html2canvas';
 import { saveAs } from 'file-saver';
 import QRCode from 'qrcode.react';
+import compress from './tiny';
 import './index.css';
-// import compress from './tiny';
 
 export default function ShotBtn(props) {
     const [height, setHeight] = useState('30px');
@@ -19,7 +19,7 @@ export default function ShotBtn(props) {
     }, [])
 
     function shotscreen() {
-        setVisible('block');
+        popupBoxRef.current.style.display = 'block';
         html2canvas(element, {
             width: element.scrollWidth,
             height: element.scrollHeight,
@@ -40,11 +40,11 @@ export default function ShotBtn(props) {
             // console.log(dataURL.length);
 
             // 利用 canvas.toBlob 即可将 canvas 转为 blob
-            canvas.toBlob(function (blob) {
-                console.log('屏幕快照完成，可以保存图片了！');
-                // 利用 FileSaver.js 中的 saveAs 方法即可将 blob 保存至本地
-                saveAs(blob, "test.png");
-            });
+            // canvas.toBlob(function (blob) {
+            //     console.log('屏幕快照完成，可以保存图片了！');
+            //     // 利用 FileSaver.js 中的 saveAs 方法即可将 blob 保存至本地
+            //     saveAs(blob, "test.png");
+            // });
 
             // 最后，将滚动元素滚动回屏幕快照前记录的纵向偏移量
             // element.scrollTop = scrollTop;
@@ -58,64 +58,77 @@ export default function ShotBtn(props) {
     const [num, setNum] = useState(0);
     const [cur, setCur] = useState(0);
     const [carouselBegin, setCarouselBegin] = useState(true);
-    const [visible, setVisible] = useState('none')
 
     const carousel = useRef(null);
     const gotoRef = useRef(null);
     const popupBoxRef = useRef(null);
 
+    async function getCompress(base64) {
+        return await compress(base64);
+    }
+
     useEffect(() => {
         if (dataURL !== '') {
-            console.log('!!!!!!!!!!!');
+            // 获得二次压缩后的字符串
+            (async () => {
+                let compressStr = await getCompress(dataURL);
+                console.log("----\n", compressStr.length);
 
-            const length = 700;
-            let temp_num = parseInt(dataURL.length / length)
-            if (dataURL.length % length !== 0) {
-                temp_num++;
-            }
-            setNum(temp_num);
-            console.log('总共展示图片：' + temp_num + ' 张');
+                const length = 700;
+                let temp_num = parseInt(compressStr.length / length)
+                if (compressStr.length % length !== 0) {
+                    temp_num++;
+                }
+                setNum(temp_num);
+                console.log('总共展示图片：' + temp_num + ' 张');
 
-            let tempTextArray = [];
+                let tempTextArray = [];
 
-            for (let i = 0; i < temp_num; i++) {
-                let temp_text = "";
-                if (temp_num < 10) {
-                    temp_text += "00" + temp_num + "-";
+                for (let i = 0; i < temp_num; i++) {
+                    let temp_text = "";
+                    if (temp_num < 10) {
+                        temp_text += "00" + temp_num + "-";
+                    }
+                    else if (num < 100) {
+                        temp_text += "0" + temp_num + "-";
+                    }
+                    else {
+                        temp_text += temp_num + "-";
+                    }
+                    if (i + 1 < 10) {
+                        temp_text += "00" + (i + 1);
+                    }
+                    else if (i + 1 < 100) {
+                        temp_text += "0" + (i + 1);
+                    }
+                    else {
+                        temp_text += (i + 1);
+                    }
+                    if ((i + 1) * length > compressStr.length) {
+                        temp_text += compressStr.slice(i * length);
+                    }
+                    else {
+                        temp_text += compressStr.slice(i * length, (i + 1) * length);
+                    }
+                    // console.log(temp_text);
+                    tempTextArray.push(temp_text);
                 }
-                else if (num < 100) {
-                    temp_text += "0" + temp_num + "-";
-                }
-                else {
-                    temp_text += temp_num + "-";
-                }
-                if (i + 1 < 10) {
-                    temp_text += "00" + (i + 1);
-                }
-                else if (i + 1 < 100) {
-                    temp_text += "0" + (i + 1);
-                }
-                else {
-                    temp_text += (i + 1);
-                }
-                if ((i + 1) * length > dataURL.length) {
-                    temp_text += dataURL.slice(i * length);
-                }
-                else {
-                    temp_text += dataURL.slice(i * length, (i + 1) * length);
-                }
-                // console.log(temp_text);
-                tempTextArray.push(temp_text);
-            }
-            setTextArray(tempTextArray);
-            const id = setInterval(() => {
-                setCur(cur => {
-                    return cur + 1 === temp_num ? 0 : cur + 1;
-                });
-            }, 100)
-            carousel.current = id;
+                setTextArray(tempTextArray);
+                document.getElementsByClassName('qrcode-box')[0].style.display = 'block'
+                const id = setInterval(() => {
+                    setCur(cur => {
+                        return cur + 1 === temp_num ? 0 : cur + 1;
+                    });
+                }, 100)
+                carousel.current = id;
+            })();
         }
     }, [dataURL]);
+
+    function closePopupBox() {
+        popupBoxRef.current.style.display = 'none';
+        carouselStop();
+    }
 
     function goto() {
         if (gotoRef.current.value !== '') {
@@ -145,15 +158,15 @@ export default function ShotBtn(props) {
         <>
             <button onClick={shotscreen} className="shotAllBtn" style={{ height: height }}>{content}</button>
 
-            <div ref={popupBoxRef} class="popup-box">
-                <div class="popup-box-close"></div>
-                <div class="popup-box-left">
-                    <div class="img-box">
+            <div ref={popupBoxRef} className="popup-box">
+                <div onClick={closePopupBox} className="popup-box-close"></div>
+                <div className="popup-box-left">
+                    <div className="img-box">
                         <img id="img-preview" src={dataURL} alt="" />
                     </div>
                 </div>
-                <div class="popup-box-right">
-                    <div class="qrcode-box">
+                <div className="popup-box-right">
+                    <div className="qrcode-box">
                         < QRCode
                             id="qrCode"
                             value={textArray[cur]}
@@ -162,36 +175,24 @@ export default function ShotBtn(props) {
                             style={{ margin: 'auto' }}
                         />
                     </div>
-                    <div class="qrcode-msg-box">
-                        <div>
-                            <span>{cur}</span> / <span>{num}</span>
-                        </div>
-                        <input ref={gotoRef} onKeyDown={(e) => { if (e.key === 'Enter') goto() }} type="text" />
-
-                        <button onClick={goto}>点击跳转二维码</button>
-
-                        <div onClick={carouselStop}>
-                            <button class="custom-btn btn-stop">停止轮播展示二维码</button>
+                    <div className="qrcode-msg-box">
+                        <div className="qrcode-progress">
+                            {cur + 1} / {num}
+                            <input ref={gotoRef} onKeyDown={(e) => { if (e.key === 'Enter') goto() }} type="text" />
                         </div>
 
-                        <div onClick={carouselContinue}>
-                            <button class="custom-btn btn-continue">继续轮播展示二维码</button>
-                        </div>
+                        <button onClick={goto} className="goto-btn"><span>点击跳转二维码</span></button>
+
+                        {/* <div onClick={carouselStop}> */}
+                        <button onClick={carouselStop} className="carousel-btn">停止轮播展示二维码</button>
+                        {/* </div> */}
+
+                        {/* <div onClick={carouselContinue}> */}
+                        <button onClick={carouselContinue} className="carousel-btn">继续轮播展示二维码</button>
+                        {/* </div> */}
                     </div>
                 </div>
             </div>
-
-            <div>
-                <div style={{ display: visible }}>
-                    <div>{cur + 1} --- {num}</div>
-
-                    <input ref={gotoRef} onKeyDown={(e) => { if (e.key === 'Enter') goto() }} type="text" />
-                    <button onClick={goto}>点击跳转二维码</button>
-                    <button onClick={carouselStop}>停止轮播展示二维码</button>
-                    <button onClick={carouselContinue}>继续轮播展示二维码</button>
-                </div>
-            </div >
         </>
     )
 }
-

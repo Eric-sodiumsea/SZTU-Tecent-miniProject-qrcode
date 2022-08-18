@@ -31,8 +31,8 @@
     position: absolute;
     right: 3px;
     top: 3px;
-    width: 25px;
-    height: 25px;
+    width: 20px;
+    height: 20px;
     background-color: rgb(134, 196, 235);
     border-radius: 5px;
 }
@@ -63,7 +63,7 @@
     transform: translate(0, -50%);
     width: 400px;
     height: 600px;
-    background-color: yellow;
+    /* background-color: yellow; */
 }
 
 /* 图片预览区域 */
@@ -74,7 +74,7 @@
     transform: translate(-0%, -0%);
     width: 100%;
     height: 100%;
-    background-color: pink;
+    /* background-color: pink; */
 }
 
 #img-preview {
@@ -98,6 +98,7 @@
     position: fixed;
     width: 100%;
     height: 100%;
+    display: none;
 }
 
 /* 二维码信息区域 */
@@ -108,93 +109,164 @@
     transform: translate(0%, -50%);
     width: 300px;
     height: 100%;
-    background-color: pink;
+    /* background-color: pink; */
 }
 
-.custom-btn {
+.qrcode-progress {
+    text-align: center;
+    height: 50px;
+    line-height: 50px;
+    font-size: 30px;
+    font-weight: 500;
+}
+
+
+/* 控制轮播展示二维码 */
+.carousel-btn {
     font-size: 24px;
     border-radius: 5px;
     padding: 10px 25px;
-    font-family: "Lato", sans-serif;
+    font-family: "Lato",
+        sans-serif;
     font-weight: 500;
     cursor: pointer;
     transition: all 0.3s ease;
     position: relative;
     display: inline-block;
     box-shadow: inset 2px 2px 2px 0px rgba(255, 255, 255, 0.5),
-        7px 7px 20px 0px rgba(0, 0, 0, 0.1), 4px 4px 5px 0px rgba(0, 0, 0, 0.1);
-}
+        7px 7px 20px 0px rgba(0, 0, 0, 0.1),
+        4px 4px 5px 0px rgba(0, 0, 0, 0.1);
 
-/* 13 */
-.btn-stop {
-    background-color: #89d8d3;
-    background-image: linear-gradient(315deg, #89d8d3 0%, #03c8a8 74%);
+    width: 100%;
+    /* height: 100%; */
     border: none;
-    z-index: 1;
+    color: #000;
+    background-color: #F7FED5;
 }
 
-.btn-stop:after {
+.carousel-btn:after {
     position: absolute;
     content: "";
-    width: 100%;
-    height: 0;
-    bottom: 0;
+    width: 0;
+    height: 100%;
+    top: 0;
     left: 0;
+    direction: rtl;
     z-index: -1;
-    border-radius: 5px;
-    background-color: #4dccc6;
-    /* background-image: linear-gradient(315deg, #4dccc6 0%, #96e4df 74%); */
     box-shadow: -7px -7px 20px 0px #fff9, -4px -4px 5px 0px #fff9,
         7px 7px 20px 0px #0002, 4px 4px 5px 0px #0001;
     transition: all 0.3s ease;
 }
 
-.btn-stop:hover {
-    color: #fff;
-}
-
-.btn-stop:hover:after {
-    top: 0;
-    height: 100%;
-}
-
-.btn-stop:active {
-    top: 2px;
-}
-
-/* 14 */
-.btn-continue {
-    background: rgb(255, 151, 0);
-    border: none;
-    z-index: 1;
-}
-
-.btn-continue:after {
-    position: absolute;
-    content: "";
-    width: 100%;
-    height: 0;
-    top: 0;
-    left: 0;
-    z-index: -1;
-    border-radius: 5px;
-    background-color: #eaf818;
-    background-image: linear-gradient(315deg, #eaf818 0%, #f6fc9c 74%);
-    box-shadow: inset 2px 2px 2px 0px rgba(255, 255, 255, 0.5),
-        7px 7px 20px 0px rgba(0, 0, 0, 0.1), 4px 4px 5px 0px rgba(0, 0, 0, 0.1);
-    transition: all 0.3s ease;
-}
-
-.btn-continue:hover {
+.carousel-btn:hover {
     color: #000;
 }
 
-.btn-continue:hover:after {
-    top: auto;
-    bottom: 0;
+.carousel-btn:hover:after {
+    left: auto;
+    right: 0;
+    width: 100%;
+}
+
+.carousel-btn:active {
+    top: 2px;
+}
+
+
+
+.goto-btn {
+    font-size: 24px;
+    border-radius: 5px;
+    padding: 10px 25px;
+    font-family: "Lato",
+        sans-serif;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    display: inline-block;
+    box-shadow: inset 2px 2px 2px 0px rgba(255, 255, 255, 0.5),
+        7px 7px 20px 0px rgba(0, 0, 0, 0.1),
+        4px 4px 5px 0px rgba(0, 0, 0, 0.1);
+
+    width: 100%;
+    background-color: #4dccc6;
+    background-image: linear-gradient(315deg, #4dccc6 0%, #96e4df 74%);
+    line-height: 42px;
+    padding: 0;
+    border: none;
+}
+
+.goto-btn:hover {
+    background-color: #89d8d3;
+    background-image: linear-gradient(315deg, #89d8d3 0%, #03c8a8 74%);
+}
+
+.goto-btn span {
+    position: relative;
+    display: block;
+    width: 100%;
     height: 100%;
 }
 
-.btn-continue:active {
-    top: 2px;
+.goto-btn:before,
+.goto-btn:after {
+    position: absolute;
+    content: "";
+    right: 0;
+    top: 0;
+    box-shadow: 4px 4px 6px 0 rgba(255, 255, 255, 0.9),
+        -4px -4px 6px 0 rgba(116, 125, 136, 0.2),
+        inset -4px -4px 6px 0 rgba(255, 255, 255, 0.9),
+        inset 4px 4px 6px 0 rgba(116, 125, 136, 0.3);
+    transition: all 0.3s ease;
+}
+
+.goto-btn:before {
+    height: 0%;
+    width: 0.1px;
+}
+
+.goto-btn:after {
+    width: 0%;
+    height: 0.1px;
+}
+
+.goto-btn:hover:before {
+    height: 100%;
+}
+
+.goto-btn:hover:after {
+    width: 100%;
+}
+
+.goto-btn span:before,
+.goto-btn span:after {
+    position: absolute;
+    content: "";
+    left: 0;
+    bottom: 0;
+    box-shadow: 4px 4px 6px 0 rgba(255, 255, 255, 0.9),
+        -4px -4px 6px 0 rgba(116, 125, 136, 0.2),
+        inset -4px -4px 6px 0 rgba(255, 255, 255, 0.9),
+        inset 4px 4px 6px 0 rgba(116, 125, 136, 0.3);
+    transition: all 0.3s ease;
+}
+
+.goto-btn span:before {
+    width: 0.1px;
+    height: 0%;
+}
+
+.goto-btn span:after {
+    width: 0%;
+    height: 0.1px;
+}
+
+.goto-btn span:hover:before {
+    height: 100%;
+}
+
+.goto-btn span:hover:after {
+    width: 100%;
 }
