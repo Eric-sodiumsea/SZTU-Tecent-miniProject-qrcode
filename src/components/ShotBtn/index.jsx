@@ -1,77 +1,49 @@
-import React, { useEffect, useState, useRef } from 'react'
+import React, { useState, useRef } from 'react'
 import html2canvas from 'html2canvas';
-import { saveAs } from 'file-saver';
+// import { saveAs } from 'file-saver';
 import QRCode from 'qrcode.react';
 import compress from './tiny';
 import './index.css';
 
 export default function ShotBtn(props) {
-    const [height, setHeight] = useState('30px');
-    const [content, setContent] = useState('截');
-
-    // 截图
-    const [element, setElement] = useState();
-    const [dataURL, setDataURL] = useState('');
-
-    useEffect(() => {
-        // console.log(qrCodeRef.current.style.display = 'none')
-        setElement(document.querySelectorAll(`.${props.region}`)[0]);
-    }, [])
-
-    function shotscreen() {
-        popupBoxRef.current.style.display = 'block';
-        html2canvas(element, {
-            width: element.scrollWidth,
-            height: element.scrollHeight,
-            // windowWidth: element.scrollWidth,
-            // windowHeight: element.scrollHeight,
-            scrollY: 0,
-            scrollX: 0,
-            scale: 0.7,
-            useCORS: true,
-            allowTaint: true,
-        }).then(canvas => {
-            // 在 .then() 中，默认传入 canvas，通过 canvas.toDataURL() 即可得到该 canvas 截图的 base64
-            // console.log(canvas.toDataURL())
-            setDataURL(canvas.toDataURL());
-
-            // 可以输出 canvas 截图的 base64 及其长度看看
-            // console.log(dataURL);
-            // console.log(dataURL.length);
-
-            // 利用 canvas.toBlob 即可将 canvas 转为 blob
-            // canvas.toBlob(function (blob) {
-            //     console.log('屏幕快照完成，可以保存图片了！');
-            //     // 利用 FileSaver.js 中的 saveAs 方法即可将 blob 保存至本地
-            //     saveAs(blob, "test.png");
-            // });
-
-            // 最后，将滚动元素滚动回屏幕快照前记录的纵向偏移量
-            // element.scrollTop = scrollTop;
-            // 将滚动元素滚动回屏幕快照前记录的横向偏移量
-            // element.scrollLeft = scrollLeft
-        });
-    }
-
-    // 二维码
+    const [showShotOptions, setShowOptions] = useState('none')
+    const [imgBase64, setImgBase64] = useState('');
     const [textArray, setTextArray] = useState([]);
     const [num, setNum] = useState(0);
     const [cur, setCur] = useState(0);
     const [carouselBegin, setCarouselBegin] = useState(true);
 
+    const { shotOptions } = props;
+
     const carousel = useRef(null);
     const gotoRef = useRef(null);
     const popupBoxRef = useRef(null);
+    const shotOptionsRef = useRef(null);
 
     async function getCompress(base64) {
         return await compress(base64);
     }
 
-    useEffect(() => {
-        if (dataURL !== '') {
-            // 获得二次压缩后的字符串
+    // 截图
+    function shotscreen(shotOptionId) {
+        console.log(shotOptionId)
+        console.log(document)
+        const element = document.getElementById(`${shotOptionId}`);
+        popupBoxRef.current.style.display = 'block';
+        html2canvas(element, {
+            width: element.scrollWidth,
+            height: element.scrollHeight,
+            // windowWidth: element.scrollWidth,
+            windowHeight: element.scrollHeight,
+            // scrollY: 0,
+            // scrollX: 0,
+            scale: 0.7,
+            useCORS: true,
+            allowTaint: true,
+        }).then(canvas => {
             (async () => {
-                let compressStr = await getCompress(dataURL);
+                setImgBase64(canvas.toDataURL())
+                let compressStr = await getCompress(canvas.toDataURL());
                 console.log("----\n", compressStr.length);
 
                 const length = 700;
@@ -122,11 +94,15 @@ export default function ShotBtn(props) {
                 }, 100)
                 carousel.current = id;
             })();
-        }
-    }, [dataURL]);
+        });
+    }
 
+    // 操作二维码的功能
     function closePopupBox() {
         popupBoxRef.current.style.display = 'none';
+        setImgBase64('');
+        setCur(0);
+        setNum(0);
         carouselStop();
     }
 
@@ -134,7 +110,12 @@ export default function ShotBtn(props) {
         if (gotoRef.current.value !== '') {
             clearInterval(carousel.current);
             setCarouselBegin(false);
-            setCur(gotoRef.current.value - 1);
+            if (gotoRef.current.value <= 0 || gotoRef.current.value > num) {
+                alert('不存在这张二维码，请重新选择');
+            }
+            else {
+                setCur(gotoRef.current.value - 1);
+            }
         }
     }
 
@@ -156,13 +137,32 @@ export default function ShotBtn(props) {
 
     return (
         <>
-            <button onClick={shotscreen} className="shotAllBtn" style={{ height: height }}>{content}</button>
+            <div
+                className="shot-box"
+                onMouseOver={() => { setShowOptions('block') }}
+                onMouseLeave={() => { setShowOptions('none') }}
+            >截</div>
+            <div
+                className="shot-options-box"
+                onMouseOver={() => { setShowOptions('block') }}
+                onMouseLeave={() => { setShowOptions('none') }}
+                ref={shotOptionsRef}
+                style={{ display: showShotOptions }}
+            >
+                <ul>
+                    {
+                        shotOptions.map((shotOption) => {
+                            return <li key={shotOption.id} onClick={() => { shotscreen(shotOption.id) }} className="shot-option">{shotOption.title}</li>
+                        })
+                    }
+                </ul>
+            </div>
 
             <div ref={popupBoxRef} className="popup-box">
                 <div onClick={closePopupBox} className="popup-box-close"></div>
                 <div className="popup-box-left">
                     <div className="img-box">
-                        <img id="img-preview" src={dataURL} alt="" />
+                        <img id="img-preview" src={imgBase64} alt="" />
                     </div>
                 </div>
                 <div className="popup-box-right">
@@ -177,19 +177,14 @@ export default function ShotBtn(props) {
                     </div>
                     <div className="qrcode-msg-box">
                         <div className="qrcode-progress">
-                            {cur + 1} / {num}
-                            <input ref={gotoRef} onKeyDown={(e) => { if (e.key === 'Enter') goto() }} type="text" />
+                            {
+                                num === 0 ? "请稍候..." : `${cur + 1} / ${num}`
+                            }
                         </div>
-
+                        <input ref={gotoRef} onKeyDown={(e) => { if (e.key === 'Enter') goto() }} className="goto-input" placeholder="输入跳转至第几张二维码" type="text" />
                         <button onClick={goto} className="goto-btn"><span>点击跳转二维码</span></button>
-
-                        {/* <div onClick={carouselStop}> */}
                         <button onClick={carouselStop} className="carousel-btn">停止轮播展示二维码</button>
-                        {/* </div> */}
-
-                        {/* <div onClick={carouselContinue}> */}
                         <button onClick={carouselContinue} className="carousel-btn">继续轮播展示二维码</button>
-                        {/* </div> */}
                     </div>
                 </div>
             </div>

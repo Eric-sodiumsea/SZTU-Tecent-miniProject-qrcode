@@ -1,14 +1,36 @@
-.shotAllBtn {
+.shot-box {
     z-index: 10;
     position: fixed;
     right: 30px;
     top: 30px;
     width: 30px;
-    /* height: 120px; */
-    background-color: skyblue;
+    height: 30px;
+    background-color: rgba(211, 97, 97, 0.1);
     font-size: 18px;
     border: 1px none rgb(203, 193, 193);
     border-radius: 10px;
+    text-align: center;
+    line-height: 30px;
+}
+
+.shot-options-box {
+    z-index: 10;
+    position: fixed;
+    right: 60px;
+    top: 30px;
+    width: 120px;
+    background-color: rgb(252, 234, 234);
+    font-size: 18px;
+    border: 1px none rgb(203, 193, 193);
+    border-radius: 10px;
+    text-align: center;
+    line-height: 30px;
+    display: none;
+}
+
+.shot-option {
+    list-style: none;
+    margin: 5px;
 }
 
 /* 弹窗 */
@@ -23,7 +45,7 @@
     background-color: white;
     border: 3px solid #000;
     border-radius: 10px;
-    /* display: none; */
+    display: none;
 }
 
 /* 关闭弹窗 */
@@ -63,7 +85,6 @@
     transform: translate(0, -50%);
     width: 400px;
     height: 600px;
-    /* background-color: yellow; */
 }
 
 /* 图片预览区域 */
@@ -74,11 +95,13 @@
     transform: translate(-0%, -0%);
     width: 100%;
     height: 100%;
-    /* background-color: pink; */
+    overflow: auto
+        /* background-color: pink; */
 }
 
 #img-preview {
-    width: 100%;
+    width: 99%;
+    border: 2px solid rgb(120, 237, 239);
 }
 
 /* 弹窗右部 */
@@ -109,7 +132,6 @@
     transform: translate(0%, -50%);
     width: 300px;
     height: 100%;
-    /* background-color: pink; */
 }
 
 .qrcode-progress {
@@ -118,62 +140,34 @@
     line-height: 50px;
     font-size: 30px;
     font-weight: 500;
+    margin-bottom: 20px;
 }
 
-
-/* 控制轮播展示二维码 */
-.carousel-btn {
+/* 跳转二维码的 input 框 */
+.goto-input {
+    height: 20px;
     font-size: 24px;
-    border-radius: 5px;
-    padding: 10px 25px;
-    font-family: "Lato",
-        sans-serif;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    position: relative;
-    display: inline-block;
-    box-shadow: inset 2px 2px 2px 0px rgba(255, 255, 255, 0.5),
-        7px 7px 20px 0px rgba(0, 0, 0, 0.1),
-        4px 4px 5px 0px rgba(0, 0, 0, 0.1);
-
-    width: 100%;
-    /* height: 100%; */
-    border: none;
-    color: #000;
-    background-color: #F7FED5;
+    padding: 7px 0px;
+    border-radius: 3px;
+    padding-left: 5px;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+    -webkit-transition: border-color ease-in-out .15s,
+        -webkit-box-shadow ease-in-out .15s;
+    -o-transition: border-color ease-in-out .15s,
+        box-shadow ease-in-out .15s;
+    transition: border-color ease-in-out .15s,
+        box-shadow ease-in-out .15s;
 }
 
-.carousel-btn:after {
-    position: absolute;
-    content: "";
-    width: 0;
-    height: 100%;
-    top: 0;
-    left: 0;
-    direction: rtl;
-    z-index: -1;
-    box-shadow: -7px -7px 20px 0px #fff9, -4px -4px 5px 0px #fff9,
-        7px 7px 20px 0px #0002, 4px 4px 5px 0px #0001;
-    transition: all 0.3s ease;
+.goto-input:focus {
+    border-color: #66afe9;
+    outline: 0;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 8px rgba(102, 175, 233, .6);
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 8px rgba(102, 175, 233, .6)
 }
 
-.carousel-btn:hover {
-    color: #000;
-}
-
-.carousel-btn:hover:after {
-    left: auto;
-    right: 0;
-    width: 100%;
-}
-
-.carousel-btn:active {
-    top: 2px;
-}
-
-
-
+/* 跳转二维码的按钮 */
 .goto-btn {
     font-size: 24px;
     border-radius: 5px;
@@ -195,6 +189,7 @@
     line-height: 42px;
     padding: 0;
     border: none;
+    margin-bottom: 20px;
 }
 
 .goto-btn:hover {
@@ -269,4 +264,56 @@
 
 .goto-btn span:hover:after {
     width: 100%;
+}
+
+
+/* 控制轮播展示二维码的按钮 */
+.carousel-btn {
+    font-size: 24px;
+    border-radius: 5px;
+    padding: 10px 25px;
+    font-family: "Lato",
+        sans-serif;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    display: inline-block;
+    box-shadow: inset 2px 2px 2px 0px rgba(255, 255, 255, 0.5),
+        7px 7px 20px 0px rgba(0, 0, 0, 0.1),
+        4px 4px 5px 0px rgba(0, 0, 0, 0.1);
+
+    width: 100%;
+    border: none;
+    color: #000;
+    background-color: #F7FED5;
+    margin-bottom: 20px;
+}
+
+.carousel-btn:after {
+    position: absolute;
+    content: "";
+    width: 0;
+    height: 100%;
+    top: 0;
+    left: 0;
+    direction: rtl;
+    z-index: -1;
+    box-shadow: -7px -7px 20px 0px #fff9, -4px -4px 5px 0px #fff9,
+        7px 7px 20px 0px #0002, 4px 4px 5px 0px #0001;
+    transition: all 0.3s ease;
+}
+
+.carousel-btn:hover {
+    color: #000;
+}
+
+.carousel-btn:hover:after {
+    left: auto;
+    right: 0;
+    width: 100%;
+}
+
+.carousel-btn:active {
+    top: 2px;
 }

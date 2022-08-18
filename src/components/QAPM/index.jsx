@@ -5,11 +5,33 @@ import './index.css';
 
 export default function QAPM() {
     const [muiGridItemTitles] = useState(['崩溃率', 'ANR率', '流畅度', '冷启动耗时', 'Webview页面完全加载耗时', 'JS错误率', '请求错误率', '成功请求耗时'])
-    // const [regions, setRegions] = useState([{
-
-    // }])
+    const shotOptions = [
+        {
+            id: 'content',
+            title: '长截图'
+        },
+        {
+            id: 'MuiGrid',
+            title: '总览表',
+        },
+        {
+            id: 'trend',
+            title: '趋势分析',
+        },
+        {
+            id: 'crashes',
+            title: '崩溃次数TOP5的页面',
+        },
+        {
+            id: 'region-analyze',
+            title: '地区分析',
+        }
+    ]
 
     const trendChartRef = useRef(null);
+    const crash1Ref = useRef(null);
+    const crash2Ref = useRef(null);
+    const regionAnalyzeRef = useRef(null);
 
     useEffect(() => {
         // 总览 -- 图表
@@ -85,16 +107,147 @@ export default function QAPM() {
             ]
         };
         trendChart.setOption(trendChartOption);
+
+        // 崩溃分析1 -- 图表
+        const crash1Chart = echarts.init(crash1Ref.current);
+        const crash1ChartOption = {
+            title: {
+                text: 'Referer of a Website',
+                subtext: 'Fake Data',
+                left: 'center'
+            },
+            tooltip: {
+                trigger: 'item'
+            },
+            legend: {
+                orient: 'vertical',
+                left: 'left'
+            },
+            series: [
+                {
+                    name: 'Access From',
+                    type: 'pie',
+                    radius: '50%',
+                    data: [
+                        { value: 1048, name: 'Search Engine' },
+                        { value: 735, name: 'Direct' },
+                        { value: 580, name: 'Email' },
+                        { value: 484, name: 'Union Ads' },
+                        { value: 300, name: 'Video Ads' }
+                    ],
+                    emphasis: {
+                        itemStyle: {
+                            shadowBlur: 10,
+                            shadowOffsetX: 0,
+                            shadowColor: 'rgba(0, 0, 0, 0.5)'
+                        }
+                    }
+                }
+            ]
+        };
+        crash1Chart.setOption(crash1ChartOption);
+
+        // 崩溃分析2 -- 图表
+        const crash2Chart = echarts.init(crash2Ref.current);
+        const crash2ChartOption = {
+            tooltip: {
+                trigger: 'item'
+            },
+            legend: {
+                top: '5%',
+                left: 'center'
+            },
+            series: [
+                {
+                    name: 'Access From',
+                    type: 'pie',
+                    radius: ['40%', '70%'],
+                    avoidLabelOverlap: false,
+                    itemStyle: {
+                        borderRadius: 10,
+                        borderColor: '#fff',
+                        borderWidth: 2
+                    },
+                    label: {
+                        show: false,
+                        position: 'center'
+                    },
+                    emphasis: {
+                        label: {
+                            show: true,
+                            fontSize: '40',
+                            fontWeight: 'bold'
+                        }
+                    },
+                    labelLine: {
+                        show: false
+                    },
+                    data: [
+                        { value: 1048, name: 'Search Engine' },
+                        { value: 735, name: 'Direct' },
+                        { value: 580, name: 'Email' },
+                        { value: 484, name: 'Union Ads' },
+                        { value: 300, name: 'Video Ads' }
+                    ]
+                }
+            ]
+        };
+        crash2Chart.setOption(crash2ChartOption);
+
+        // 地图分析 -- 图片
+        const regionAnalyzeChart = echarts.init(regionAnalyzeRef.current);
+        const regionAnalyzeChartOption = {
+            xAxis: {},
+            yAxis: {},
+            series: [
+                {
+                    symbolSize: 20,
+                    data: [
+                        [10.0, 8.04],
+                        [8.07, 6.95],
+                        [13.0, 7.58],
+                        [9.05, 8.81],
+                        [11.0, 8.33],
+                        [14.0, 7.66],
+                        [13.4, 6.81],
+                        [10.0, 6.33],
+                        [14.0, 8.96],
+                        [12.5, 6.82],
+                        [9.15, 7.2],
+                        [11.5, 7.2],
+                        [3.03, 4.23],
+                        [12.2, 7.83],
+                        [2.02, 4.47],
+                        [1.05, 3.33],
+                        [4.05, 4.96],
+                        [6.03, 7.24],
+                        [12.0, 6.26],
+                        [12.0, 8.84],
+                        [7.08, 5.82],
+                        [5.02, 5.68]
+                    ],
+                    type: 'scatter'
+                }
+            ],
+            grid: [
+                {
+                    top: 20,
+                    bottom: 20,
+                }
+            ]
+        };
+        regionAnalyzeChart.setOption(regionAnalyzeChartOption);
     }, []);
 
     return (
         <>
-            <ShotBtn region={"content"} />
-            <div className="content">
+            <ShotBtn shotOptions={shotOptions} />
+
+            <div id="content">
                 <h4 className="content-title">
                     性能看板
                 </h4>
-                <div className="MuiGrid">
+                <div id="MuiGrid">
                     {
                         muiGridItemTitles.map((muiGridItemTitle) => {
                             return (
@@ -110,21 +263,26 @@ export default function QAPM() {
                         })
                     }
                 </div>
-                <div className="trend">
+                <div id="trend">
                     <h4 className="trend-title">
                         趋势分析
                     </h4>
                     <div ref={trendChartRef} className="trend-chart"></div>
                 </div>
-                <div className="crashes">
+                <div id="crashes">
                     <h4 className="crashes-title">
                         崩溃次数TOP5的页面
                     </h4>
+                    <div className="crashed-content">
+                        <div ref={crash1Ref} className="crash1"></div>
+                        <div ref={crash2Ref} className="crash2"></div>
+                    </div>
                 </div>
-                <div className="region">
-                    <h4 className="region-title">
+                <div id="region-analyze">
+                    <h4 className="region-analyze-title">
                         地区分析
                     </h4>
+                    <div ref={regionAnalyzeRef} className="region-analyze-chart"></div>
                 </div>
             </div>
         </>
