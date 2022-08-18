@@ -10,7 +10,8 @@ import compress from './tiny';
 import './index.css';
 
 export default function ShotBtn(props) {
-    const [showShotOptions, setShowOptions] = useState('none')
+    const [showShotOptions, setShowShotOptions] = useState('none');
+    const [showQrcode, setShowQrcode] = useState('none');
     const [imgBase64, setImgBase64] = useState('');
     const [textArray, setTextArray] = useState([]);
     const [num, setNum] = useState(0);
@@ -19,7 +20,7 @@ export default function ShotBtn(props) {
 
     const { shotOptions } = props;
 
-    const carousel = useRef(null);
+    const carouselRef = useRef(null);
     const gotoRef = useRef(null);
     const popupBoxRef = useRef(null);
     const shotOptionsRef = useRef(null);
@@ -80,7 +81,7 @@ export default function ShotBtn(props) {
                     if (temp_num < 10) {
                         temp_text += "00" + temp_num + "-";
                     }
-                    else if (num < 100) {
+                    else if (temp_num < 100) {
                         temp_text += "0" + temp_num + "-";
                     }
                     else {
@@ -105,8 +106,8 @@ export default function ShotBtn(props) {
                 }
                 setTextArray(tempTextArray);
 
-                // 显示 qrcode-box 弹窗
-                document.getElementById('qrcode-box').style.display = 'block'
+                // 显示展示二维码区域
+                setShowQrcode('block')
 
                 // 开始轮播展示二维码
                 const id = setInterval(() => {
@@ -114,7 +115,7 @@ export default function ShotBtn(props) {
                         return cur + 1 === temp_num ? 0 : cur + 1;
                     });
                 }, 100)
-                carousel.current = id;
+                carouselRef.current = id;
             })();
         });
     }
@@ -122,6 +123,7 @@ export default function ShotBtn(props) {
     // 关闭弹窗
     function closePopupBox() {
         popupBoxRef.current.style.display = 'none';
+        setShowQrcode('none');
         setImgBase64('');
         setCur(0);
         setNum(0);
@@ -131,7 +133,7 @@ export default function ShotBtn(props) {
     // 跳转二维码
     function goto() {
         if (gotoRef.current.value !== '') {
-            clearInterval(carousel.current);
+            clearInterval(carouselRef.current);
             setCarouselBegin(false);
             if (gotoRef.current.value <= 0 || gotoRef.current.value > num) {
                 alert('不存在这张二维码，请重新选择');
@@ -146,7 +148,7 @@ export default function ShotBtn(props) {
     function carouselContinue() {
         if (carouselBegin === false) {
             setCarouselBegin(true);
-            carousel.current = setInterval(() => {
+            carouselRef.current = setInterval(() => {
                 setCur(cur => {
                     return cur + 1 === num ? 0 : cur + 1;
                 });
@@ -156,7 +158,7 @@ export default function ShotBtn(props) {
 
     // 停止轮播二维码
     function carouselStop() {
-        clearInterval(carousel.current);
+        clearInterval(carouselRef.current);
         setCarouselBegin(false);
     }
 
@@ -165,13 +167,13 @@ export default function ShotBtn(props) {
             {/* 网页固钉 -- 截图选项 */}
             <div
                 className="shot-box"
-                onMouseOver={() => { setShowOptions('block') }}
-                onMouseLeave={() => { setShowOptions('none') }}
+                onMouseOver={() => { setShowShotOptions('block') }}
+                onMouseLeave={() => { setShowShotOptions('none') }}
             >截</div>
             <div
                 className="shot-options-box"
-                onMouseOver={() => { setShowOptions('block') }}
-                onMouseLeave={() => { setShowOptions('none') }}
+                onMouseOver={() => { setShowShotOptions('block') }}
+                onMouseLeave={() => { setShowShotOptions('none') }}
                 ref={shotOptionsRef}
                 style={{ display: showShotOptions }}
             >
@@ -199,13 +201,13 @@ export default function ShotBtn(props) {
                 <div className="popup-box-right">
 
                     {/* 二维码展示区域 */}
-                    <div className="qrcode-box">
+                    <div id="qrcode-box">
                         < QRCode
                             id="qrCode"
                             value={textArray[cur]}
                             size={600} // 二维码的大小
                             fgColor="#000000" // 二维码的颜色
-                            style={{ margin: 'auto' }}
+                            style={{ margin: 'auto', display: showQrcode }}
                         />
                     </div>
 

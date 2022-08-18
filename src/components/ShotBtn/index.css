@@ -107,22 +107,18 @@
 
 /* 有关二维码的区域 */
 .popup-box-right {
-    /* float: right; */
     position: fixed;
     right: 20px;
     top: 50%;
     transform: translate(0, -50%);
     width: 930px;
     height: 600px;
-    /* background-color: red; */
 }
 
 /* 二维码展示区域 */
-.qrcode-box {
-    position: fixed;
-    width: 100%;
+#qrcode-box {
+    width: 600px;
     height: 100%;
-    display: none;
 }
 
 /* 二维码信息区域 */
