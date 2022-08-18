@@ -2,6 +2,22 @@
 
 在无网 / 无服务器的情况下，利用 html2canvas 和 qrcode.react 实现对网页进行截图，然后通过多张二维码将图片的 base64 分享至客户端显示图片
 
+## 使用方法
+
+example:
+    QAPM
+        - index.jsx
+        - index.css
+    ShotBtn
+        - index.jsx
+        - index.css
+        - tiny.js
+
+npm i shotbtn
+
+在所需截图的组件中引入：import ShotBtn from 'shotbtn
+将希望截图的模块的 id 及其昵称放在数组对象中传入 <ShotBtn /> 即可
+
 ## 项目逻辑
 
 首先，用户点击截图按钮，将利用 html2canvas 对指定 DOM 节点进行截图，然后利用 @mxsir/image-tiny 对图片进行压缩，返回 base64，再利用 gzip 对 base64 进行压缩，得到一个字符串。
