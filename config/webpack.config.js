@@ -294,7 +294,6 @@ module.exports = function (webpackEnv) {
     },
     externals: {
       fs: require('fs'),
-      // child_process: require('child_process'),
     },
     resolve: {
       fallback: { "path": require.resolve("path-browserify") },

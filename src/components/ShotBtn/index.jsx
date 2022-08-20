@@ -6,8 +6,86 @@
 import React, { useState, useRef } from 'react'
 import html2canvas from 'html2canvas';
 import QRCode from 'qrcode.react';
-import compress from './tiny';
+import tiny from "@mxsir/image-tiny";
+import { gzip } from 'pako';
 import './index.css';
+
+// base64 -> File
+/**
+ * @author Levin
+ * @param {Base64编码字符串} dataurl 
+ * @param {文件对象命名} filename 
+ * @returns 文件对象
+ */
+function dataURLtoFile(dataurl, filename) {
+    // 获取到base64编码
+    const arr = dataurl.split(',')
+    // 将base64编码转为字符串
+    // console.log(arr[1]);
+    const bstr = atob(arr[1])
+    let n = bstr.length
+    const u8arr = new Uint8Array(n) // 创建初始化为0的，包含length个元素的无符号整型数组
+    while (n--) {
+        u8arr[n] = bstr.charCodeAt(n)
+    }
+    return new File([u8arr], filename, {
+        type: 'image/png',
+    })
+}
+
+/**
+ * 
+ * @param {Base64编码字符串} base64 
+ * @returns 
+ */
+async function tinyCompress(base64) {
+    // 将base64转换为文件对象
+    let old_file = dataURLtoFile(base64, "test_000" + ".png");
+    // console.log(old_file);
+    // tiny插件压缩 
+    return await tiny(old_file, 1);
+}
+
+/**
+ * @author Levin
+ * @param {待压缩的字符串} str 
+ * @returns 压缩后的字符串
+ */
+function gzipStr(str) {
+    return bin2Str(gzip(str));
+}
+
+/**
+ * @author Levin
+ * @param {字节数组} array 
+ * @returns 字符串
+ */
+function bin2Str(array) {
+    return String.fromCharCode.apply(String, array);
+}
+
+async function compress(base64) {
+    let compress_pic_base64 = await compressPic(base64);
+    compress_pic_base64 = compress_pic_base64.split(',')[1];
+    // console.log('compress_pic_base64: ', compress_pic_base64);
+    // console.log('compress_pic_base64.length: ', compress_pic_base64.length);
+    let res = gzipStr(compress_pic_base64);
+    return res;
+}
+
+async function compressPic(base64) {
+    let file = await tinyCompress(base64);
+    let reader = new FileReader();
+    reader.readAsDataURL(file);
+    return new Promise(rs => {
+        reader.onload = () => {
+            // console.log('=======文件读取成功=======');
+            rs(reader.result);
+        }
+    })
+}
+
+
 
 export default function ShotBtn(props) {
     const [showShotOptions, setShowShotOptions] = useState('none');
@@ -18,7 +96,7 @@ export default function ShotBtn(props) {
     const [cur, setCur] = useState(0);
     const [carouselBegin, setCarouselBegin] = useState(true);
 
-    const { shotOptions } = props;
+    const { shotOptions, ratio, title } = props;
 
     const carouselRef = useRef(null);
     const gotoRef = useRef(null);
@@ -34,10 +112,13 @@ export default function ShotBtn(props) {
      * @param {截图模块的Id} shotOptionId 
      */
     function shotscreen(shotOptionId) {
-        console.log(shotOptionId)
-        console.log(document)
-        const element = document.getElementById(`${shotOptionId}`);
-        popupBoxRef.current.style.display = 'block';
+        let element;
+        if (shotOptionId === undefined) {
+            element = document.body;
+        }
+        else {
+            element = document.getElementById(`${shotOptionId}`);
+        }
 
         /**
          * 截图
@@ -47,23 +128,27 @@ export default function ShotBtn(props) {
             width: element.scrollWidth,
             height: element.scrollHeight,
             windowHeight: element.scrollHeight,
-            scale: 0.7,
+            scale: ratio ? ratio : 0.8,
             useCORS: true,
             allowTaint: true,
         }).then(canvas => {
+            // 跳出弹窗
+            popupBoxRef.current.style.display = 'block';
+
             /**
              * 执行异步函数
              */
             (async () => {
                 // 将截图图片的 base64 保存下来，用于预览图片
                 setImgBase64(canvas.toDataURL())
-
+                // console.log('canvas.toDataURL().length:', canvas.toDataURL().length);
                 /**
                  * getCompress
                  * @param {base64} canvas.toDataURL()
                  * @return {压缩图片并通过gzip压缩后的字符串} compressStr
                  */
                 let compressStr = await getCompress(canvas.toDataURL());
+                // console.log('compressStr: ', compressStr.length)
 
                 // 分割字符串，存入数组中，后续逐个放到二维码中
                 const length = 700;
@@ -72,7 +157,7 @@ export default function ShotBtn(props) {
                     temp_num++;
                 }
                 setNum(temp_num);
-                console.log('总共展示图片：' + temp_num + ' 张');
+                // console.log('总共展示图片：' + temp_num + ' 张');
 
                 let tempTextArray = [];
 
@@ -167,24 +252,28 @@ export default function ShotBtn(props) {
             {/* 网页固钉 -- 截图选项 */}
             <div
                 className="shot-box"
+                onClick={() => { shotscreen() }}
                 onMouseOver={() => { setShowShotOptions('block') }}
                 onMouseLeave={() => { setShowShotOptions('none') }}
-            >截</div>
-            <div
-                className="shot-options-box"
-                onMouseOver={() => { setShowShotOptions('block') }}
-                onMouseLeave={() => { setShowShotOptions('none') }}
-                ref={shotOptionsRef}
-                style={{ display: showShotOptions }}
-            >
-                <ul>
-                    {
-                        shotOptions.map((shotOption) => {
-                            return <li key={shotOption.id} onClick={() => { shotscreen(shotOption.id) }} className="shot-option">{shotOption.title}</li>
-                        })
-                    }
-                </ul>
-            </div>
+            >{title ? title : '截'}</div>
+            {
+                shotOptions === undefined ? <></> :
+                    <div
+                        className="shot-options-box"
+                        onMouseOver={() => { setShowShotOptions('block') }}
+                        onMouseLeave={() => { setShowShotOptions('none') }}
+                        ref={shotOptionsRef}
+                        style={{ display: showShotOptions }}
+                    >
+                        <ul className="shot-option-box">
+                            {
+                                shotOptions.map((shotOption) => {
+                                    return <li key={shotOption.id} onClick={() => { shotscreen(shotOption.id) }} className="shot-option">{shotOption.title}</li>
+                                })
+                            }
+                        </ul>
+                    </div>
+            }
 
             {/* 展示二维码的弹窗 */}
             <div ref={popupBoxRef} id="popup-box">

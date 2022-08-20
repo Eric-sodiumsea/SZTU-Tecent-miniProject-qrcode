@@ -6,10 +6,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import * as echarts from 'echarts';
 import ShotBtn from '../ShotBtn'
+// import { ShotBtn } from 'screenshot-shareqrcode'
 import './index.css';
 
 export default function QAPM() {
-    const [muiGridItemTitles] = useState(['崩溃率', 'ANR率', '流畅度', '冷启动耗时', 'Webview页面完全加载耗时', 'JS错误率', '请求错误率', '成功请求耗时'])
     const shotOptions = [
         {
             id: 'content',
@@ -32,6 +32,8 @@ export default function QAPM() {
             title: '地区分析',
         }
     ]
+
+    const [muiGridItemTitles] = useState(['崩溃率', 'ANR率', '流畅度', '冷启动耗时', 'Webview页面完全加载耗时', 'JS错误率', '请求错误率', '成功请求耗时'])
 
     const trendChartRef = useRef(null);
     const crash1Ref = useRef(null);
@@ -247,7 +249,7 @@ export default function QAPM() {
     return (
         <>
             {/* 插入 ShotBtn 组件，传入需要截图的区域的 id 数组对象 */}
-            <ShotBtn shotOptions={shotOptions} />
+            <ShotBtn shotOptions={shotOptions} ratio={0.8} title="截" />
 
             {/* 总内容 */}
             <div id="content">

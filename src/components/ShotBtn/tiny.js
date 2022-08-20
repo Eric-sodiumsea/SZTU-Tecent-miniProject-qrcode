@@ -34,7 +34,7 @@ async function tinyCompress(base64) {
     let old_file = dataURLtoFile(base64, "test_000" + ".png");
     console.log(old_file);
     // tiny插件压缩 
-    return await tiny(old_file, 1);
+    return await tiny(old_file, 0.8);
 }
 
 /**
@@ -58,7 +58,7 @@ function bin2Str(array) {
 export default async function compress(base64) {
     let compress_pic_base64 = await compressPic(base64);
     compress_pic_base64 = compress_pic_base64.split(',')[1];
-    // console.log('\n', compress_pic_base64)
+    console.log('gzip:', compress_pic_base64)
     let res = gzipStr(compress_pic_base64);
     // console.log('res\n', res);
     // console.log(resStr);
