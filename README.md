@@ -23,6 +23,8 @@ example:
 
 npm i screenshot-shareqrcode
 
+使用教程 -- https://www.npmjs.com/package/screenshot-shareqrcode
+
 在所需截图的组件中引入：import { ShotBtn } from 'screenshot-shareqrcode'
 将希望截图的模块的 id 及其昵称放在数组对象中传入 \<ShotBtn /\> 即可
 
