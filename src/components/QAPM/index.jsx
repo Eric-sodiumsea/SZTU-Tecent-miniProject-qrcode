@@ -5,8 +5,8 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import * as echarts from 'echarts';
-import ShotBtn from '../ShotBtn'
 // import { ShotBtn } from 'screenshot-shareqrcode'
+import ShotBtn from '../ShotBtn'
 import './index.css';
 
 export default function QAPM() {
