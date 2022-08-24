@@ -1,6 +1,12 @@
-# Tecent-mini-屏幕快照及二维码分享
+# screenshot-shareqrcode
 
-利用我打包的 npm 组件：screenshot-shareqrcode ，利用 html2canvas 对页面进行长截图或分块截图，并利用 qrcode.react 将图片通过二维码的形式分享出去，最终客户端扫码后即可得到所截取的图片。
+这是一个 React 组件，它能对页面进行长截图或分块截图，并将图片通过二维码的形式分享出去，客户端扫码后即可得到所截取的图片。
+
+
+
+github：https://github.com/Eric-sodiumsea/SZTU-Tecent-miniProject-qrcode/tree/screenshot-shareqrcode
+
+qq邮箱：2719495583@qq.com
 
 
 
@@ -12,54 +18,106 @@
 
 ## 使用方法
 
-example:
+```jsx
+import {ShotBtn} from 'screenshot-shareqrcode';
 
-    QAPM
-        - index.jsx
-        - index.css
-    ShotBtn
-        - index.jsx
-        - index.css
-
-npm i screenshot-shareqrcode
-
-使用教程 -- https://www.npmjs.com/package/screenshot-shareqrcode
-
-在所需截图的组件中引入：import { ShotBtn } from 'screenshot-shareqrcode'
-将希望截图的模块的 id 及其昵称放在数组对象中传入 \<ShotBtn /\> 即可
-
-
-
-## 项目逻辑
-
-首先，用户点击截图按钮，将利用 html2canvas 对指定 DOM 节点进行截图，然后利用 @mxsir/image-tiny 对图片进行压缩，返回 base64，再利用 gzip 对 base64 进行压缩，得到一个字符串。
-
-接下来，对这个字符串进行分割、分别放入二维码中（二维码利用 qrcode.react 生成），在每段字符串前加入 xxx-yyy 标识，例如 100-001 表示共有 100 张二维码，当前二维码为第 1 张
-
-最后，客户端扫码，并将得到的字符串通过 gzip 解压完，并拼接起来，即可得到图片的 base64，然后将 base64 转回图片展示给用户。
-
-
-
-## 实现原理
-
-1、用户点击截图按钮后，执行 html2canvas 进行截图，并通过 canvas.toDataURL() 得到其 base64
-
-2、利用 @mxsir/image-tiny 传入 base64 对图片进行压缩，并在 tiny.js 中利用 gzip 对压缩后的图片的 base64 进行压缩，最后得到 compressStr
-
-3、将 compressStr 放入轮播二维码中
+export default function xxx() {
+	const shotOptions = [
+        {
+            id: 'xxx',
+            title: 'aaa'
+        },
+        {
+            id: 'yyy',
+            title: 'bbb',
+        },
+        {
+            id: 'zzz',
+            title: 'ccc',
+        }
+    ];
+    const ratio = 0.8;
+    const title = "截";
+    
+    return (
+    	<>
+    		<ShotBtn shotOptions={shotOptions} ratio={ratio} title={title} />
+    		...
+    	</>
+    )
+}
+```
 
 
 
-## web 页面描述
+## 传入参数
 
-1、在页面右上角插入一个截图按钮，用户点击后，将在页面中出现一个弹窗。
+|    prop     |   type   | default value |                           comment                            |
+| :---------: | :------: | :-----------: | :----------------------------------------------------------: |
+| shotOptions | [object] |   undefined   | 传入希望截图的 DOM 节点的 id，和显示在页面截图按钮处的 title |
+|    ratio    |  number  |      0.8      |                          图片清晰度                          |
+|    title    |  string  |     "截"      |                     页面截图按钮的 title                     |
 
-2、弹窗的左部是页面截图的预览；中部是轮播展示二维码区域，用户在客户端扫码后即可得到截图；右部是对二维码进行操作的区域。
+
+
+## 功能
+
+将按钮固定在页面的右上角，点击后可对 document.body 进行长截图，悬浮时将出现传入的 shotOptions 内各个 id 对应的 title，点击 title 即可对其对应的 id 模块进行截图。
+
+截图后，将在页面出现一个弹窗，左部为图片预览的区域、中部为轮播展示二维码的区域、右部为对二维码进行操作的区域。
+
+其中操作二维码的功能有：跳转至指定二维码、停止轮播二维码和继续轮播二维码
 
 
 
-## web 页面逻辑
+## 所需配置
 
-1、用户点击截图按钮后，出现弹窗，等待截图、并将图片压缩完，得到最终的 compressStr 后，开启轮播展示二维码的定时器
+```js
+// 在 webpack.config.js 中新增代码：
+......
+externals: {
+	fs: require('fs'),
+},
+resolve: {
+	fallback: {
+		"path": require.resolve("path-browserify")
+	},
+	......
+}
+......
 
-2、点击关闭弹窗后，为下一次截图进行重置操作：关闭弹窗；清除图片预览内容；清除跳转二维码的输入框的内容；将当前二维码和二维码数量都设为 0 ；关闭轮播展示二维码的定时器；
+// 1、首先在命令行将 config 暴露出来
+npm run eject
+
+// 2、打开 config 中的 webpack.config.js
+
+// 3、在 resolve 对象中添加 fallback 对象属性
+resolve.fallback: { "path": require.resolve("path-browserify") }
+
+// 4、安装 path-browserify
+npm i path-browserify
+
+// 5、在刚刚操作的 resolve 对象前加入 externals 对象
+externals: {
+	fs: require('fs'),
+}
+
+// 6、将 npm 包中的 pngtiny-custom.wasm 复制到静态文件夹（public）中
+ |-- node_modules
+    |-- screenshot-shareqrcode
+        |-- lib
+            |-- pngtiny-custom.wasm
+
+ |-- public
+    |-- pngtiny-custom.wasm
+```
+
+
+
+## 如何得到截图
+
+使用相应的客户端对二维码进行扫码，即可得到截取的图片。
+
+扫码内容为：xxx-yyy......
+
+xxx-yyy 为扫码内容的前缀，例如：100-001 代表一共有 100 张二维码，此张二维码为第 1 张，后面的 ...... 为 gzip 压缩后的字符串，客户端只需按照前缀给的序号，将这些扫出来的字符串合并起来，再通过 gzip 解压，即可得到完整的 base64，再将其以图片的形式展现出来即可。

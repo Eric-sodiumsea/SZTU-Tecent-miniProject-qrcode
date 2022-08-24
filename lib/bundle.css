@@ -24,24 +24,14 @@
     font-size: 18px;
     border: 1px none rgb(203, 193, 193);
     border-radius: 10px;
+    text-align: center;
     line-height: 30px;
     display: none;
-    margin: 0;
-    padding: 0;
-}
-
-.shot-option-box {
-    width: 100%;
-    margin: 0;
-    padding: 0;
 }
 
 .shot-option {
     list-style: none;
-    margin: 5px 0;
-    padding: 0;
-    width: 100%;
-    text-align: center;
+    margin: 5px;
 }
 
 /* 展示二维码的弹窗 */
