@@ -4,7 +4,7 @@
 
 
 
-github：https://github.com/Eric-sodiumsea/SZTU-Tecent-miniProject-qrcode/tree/screenshot-shareqrcode
+npm：https://www.npmjs.com/package/screenshot-shareqrcode
 
 qq邮箱：2719495583@qq.com
 
