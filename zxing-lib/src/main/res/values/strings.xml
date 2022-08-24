@@ -1,0 +1,20 @@
+<resources>
+    <string name="layout_scan">Scan</string>
+    <string name="layout_album">select</string>
+    <string name="layout_focus_qrcode">focus on qrcode</string>
+
+    <string name="note_processing">processing...</string>
+    <string name="note_identify_failed">identify failed</string>
+    <string name="note_scan_failed">scan failed</string>
+    <string name="note_no_flashlight">cannot open flashlight</string>
+
+
+    <style name="MyProgressBar" parent="@android:style/Widget.ProgressBar.Horizontal">
+        <item name="android:maxHeight">5dip</item>
+        <item name="android:minHeight">2dip</item>
+        <item name="android:indeterminateOnly">false</item>
+        <item name="android:indeterminateDrawable">@android:drawable/progress_indeterminate_horizontal</item>
+        <item name="android:progressDrawable">@drawable/progressbar</item>
+    </style>
+
+</resources>

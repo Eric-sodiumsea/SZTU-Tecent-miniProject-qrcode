@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="20dp">
+
+
+    <EditText
+        android:id="@+id/add_edit_name"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:drawableLeft="@drawable/ic_baseline_face_24"
+        android:drawablePadding="5dp"
+        android:hint="昵称(必填)"
+        android:textColor="#666666"/>
+
+    <EditText
+        android:id="@+id/add_edit_intro"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_below="@id/add_edit_name"
+        android:drawableLeft="@drawable/ic_baseline_filter_frames_24"
+        android:drawablePadding="5dp"
+        android:hint="简介"
+        android:textColor="#666666"/>
+
+    <EditText
+        android:id="@+id/add_edit_url"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_below="@id/add_edit_intro"
+        android:hint="链接(必填)"
+        android:textColor="#666666"
+        android:drawablePadding="5dp"
+        android:drawableLeft="@drawable/ic_baseline_link_24"/>
+
+    <com.qmuiteam.qmui.widget.roundwidget.QMUIRoundButton
+        android:id="@+id/add_sure"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/add_edit_url"
+        android:layout_alignParentRight="true"
+        android:layout_gravity="center"
+        android:paddingLeft="16dp"
+        android:paddingTop="10dp"
+        android:paddingRight="16dp"
+        android:paddingBottom="10dp"
+        android:text="确定" />
+
+</RelativeLayout>
